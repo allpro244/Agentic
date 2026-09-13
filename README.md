@@ -10,6 +10,12 @@ step starts.
 
 Step 1: two people, one scene. Built. Waiting to be run and read.
 
+Two ways to run it: the terminal (below), or the artifact page, which runs
+the same scene inside claude.ai on the viewer's own account and needs no
+API key. `lineage/artifact/build.py` builds `lineage/step1.html` from the
+same prompt and people files the terminal runner uses; rebuild it after
+tuning either.
+
 ## Running Step 1
 
 ```

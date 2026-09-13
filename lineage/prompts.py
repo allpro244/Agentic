@@ -58,6 +58,13 @@ about the other person. You can want two things at once. You do not have to be h
 with yourself either.\
 """
 
+# The lines a scene is driven with. {other} is the other person's name.
+BEFORE = "Before anything is said: a private thought. What do you want here? What are you afraid of?"
+OPENER = "The scene begins. {other} is in the room with you. You speak first."
+ENTER = "The scene begins. {other} is in the room with you."
+AFTER = ("The scene is over. A private thought. What do you make of it? "
+         "What did {other} say that you will remember, in the words they used? What now?")
+
 
 def person_system(name, self_md, secret_md):
     """The system prompt for one person. Built only from that person's own files."""

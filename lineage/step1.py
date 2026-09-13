@@ -87,19 +87,15 @@ def run():
     heading("SETTING")
     print(SETTING)
 
-    before = (
-        SETTING
-        + "\n\nBefore anything is said: a private thought. "
-          "What do you want here? What are you afraid of?"
-    )
+    before = SETTING + "\n\n" + prompts.BEFORE
     for p in (a, b):
         heading(f"{p.name}, before")
         print(p.think(before))
 
     heading("SCENE")
-    line = a.speak(f"The scene begins. {b.name} is in the room with you. You speak first.")
+    line = a.speak(prompts.OPENER.format(other=b.name))
     print(f"{a.name}: {line}\n")
-    line = b.speak(f"The scene begins. {a.name} is in the room with you.\n\n{a.name}: {line}")
+    line = b.speak(prompts.ENTER.format(other=a.name) + f"\n\n{a.name}: {line}")
     print(f"{b.name}: {line}\n")
 
     gone = left(line)
@@ -122,11 +118,7 @@ def run():
 
     for p, other in ((a, b), (b, a)):
         heading(f"{p.name}, after")
-        print(p.think(
-            f"The scene is over. A private thought. "
-            f"What do you make of it? What did {other.name} say that you will "
-            f"remember, in the words they used? What now?"
-        ))
+        print(p.think(prompts.AFTER.format(other=other.name)))
 
     print()
     print(f"[tokens: {llm.usage['input']} in, {llm.usage['output']} out]")

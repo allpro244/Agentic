@@ -1,0 +1,592 @@
+<title>Lineage</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Mono:wght@400;500&family=Archivo+Narrow:wght@500;600&display=swap">
+<style>
+  :root {
+    --ground: #ECEEF0;
+    --paper: #F7F7F5;
+    --thought: #F0F0EA;
+    --ink: #1B1E22;
+    --ink-2: #5B616B;
+    --rule: #C7CCD2;
+    --seal: #8A2D2D;
+    --on-seal: #FBF7F5;
+    --barley: #7E651B;
+    --focus: #2D5B8A;
+    --serif: "Spectral", Georgia, "Times New Roman", serif;
+    --mono: "IBM Plex Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+    --narrow: "Archivo Narrow", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #14171B;
+      --paper: #1B1F24;
+      --thought: #21252B;
+      --ink: #E6E4DF;
+      --ink-2: #9AA1AA;
+      --rule: #333A43;
+      --seal: #D2665F;
+      --on-seal: #14171B;
+      --barley: #D1AA45;
+      --focus: #8AB4E8;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground: #14171B;
+    --paper: #1B1F24;
+    --thought: #21252B;
+    --ink: #E6E4DF;
+    --ink-2: #9AA1AA;
+    --rule: #333A43;
+    --seal: #D2665F;
+    --on-seal: #14171B;
+    --barley: #D1AA45;
+    --focus: #8AB4E8;
+  }
+
+  body {
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--serif);
+    font-size: 17px;
+    line-height: 1.55;
+    padding-inline: 20px;
+    padding-block: 30px 64px;
+  }
+  .page { max-width: 72ch; margin: 0 auto; }
+
+  .eyebrow {
+    font: 600 12px/1.2 var(--narrow);
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+  h1 {
+    font: 500 36px/1.1 var(--serif);
+    letter-spacing: -.01em;
+    margin: 10px 0 14px;
+    text-wrap: balance;
+  }
+  .setting {
+    font-style: italic;
+    max-width: 65ch;
+    margin: 0 0 18px;
+  }
+
+  .cast {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px 28px;
+    border-block: 1px solid var(--rule);
+    padding-block: 14px;
+    margin: 0 0 22px;
+  }
+  .cast .who {
+    font: 600 13px/1.2 var(--narrow);
+    letter-spacing: .1em;
+    text-transform: uppercase;
+  }
+  .cast p { margin: 4px 0 0; font-size: 15px; color: var(--ink-2); }
+
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 14px;
+    margin-bottom: 26px;
+  }
+  button {
+    font: 600 14px/1 var(--narrow);
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    padding: 11px 16px;
+    border-radius: 2px;
+    border: 1px solid var(--seal);
+    background: var(--seal);
+    color: var(--on-seal);
+    cursor: pointer;
+  }
+  button.quiet { background: transparent; color: var(--seal); }
+  button:disabled { opacity: .45; cursor: default; }
+  button:focus-visible, select:focus-visible, summary:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+  }
+  .tier {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font: 500 13px/1 var(--narrow);
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+  select {
+    font: 500 14px/1 var(--narrow);
+    padding: 9px 10px;
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    background: var(--paper);
+    color: var(--ink);
+  }
+  .status {
+    flex-basis: 100%;
+    font: 400 13.5px/1.5 var(--mono);
+    color: var(--ink-2);
+    min-height: 1.5em;
+  }
+
+  .transcript {
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    padding: 8px 28px 28px;
+  }
+  .rest {
+    font-style: italic;
+    color: var(--ink-2);
+    padding-block: 18px 12px;
+    margin: 0;
+  }
+  .mark {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    font: 600 12px/1.2 var(--narrow);
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--barley);
+    margin: 30px 0 10px;
+  }
+  .mark::after { content: ""; flex: 1; border-top: 1px solid var(--rule); }
+  .mark.scene { color: var(--seal); }
+
+  .thought {
+    background: var(--thought);
+    border-left: 3px solid var(--barley);
+    padding: 12px 16px;
+    font: 400 14px/1.65 var(--mono);
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+  .thought .som { color: var(--barley); font-weight: 500; }
+
+  .line {
+    display: grid;
+    grid-template-columns: 7em 1fr;
+    gap: 4px 18px;
+    padding: 11px 0;
+    border-bottom: 1px dotted var(--rule);
+  }
+  .line:last-child { border-bottom: 0; }
+  .line .who {
+    font: 600 13px/1.6 var(--narrow);
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    text-align: right;
+    color: var(--ink-2);
+    padding-top: 3px;
+  }
+  .line .said { overflow-wrap: anywhere; }
+  .said .act, .thought .act { color: var(--ink-2); font-style: italic; }
+
+  .pending { color: var(--ink-2); font-style: italic; }
+  .caret::after { content: "\258D"; color: var(--barley); margin-left: 1px; animation: blink 1s steps(2) infinite; }
+  @keyframes blink { to { opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { .caret::after { animation: none; } }
+  .note { font: 400 13px/1.5 var(--mono); color: var(--seal); margin-top: 6px; }
+
+  details.files { margin-top: 30px; }
+  summary {
+    font: 600 13px/1.2 var(--narrow);
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    cursor: pointer;
+    padding: 10px 0;
+  }
+  .file { margin-top: 18px; }
+  .file .path { font: 500 12px/1.4 var(--mono); color: var(--ink-2); margin-bottom: 6px; }
+  .file pre {
+    margin: 0;
+    font: 400 13.5px/1.65 var(--mono);
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    background: var(--thought);
+    border: 1px solid var(--rule);
+    padding: 12px 14px;
+  }
+  .foot {
+    margin-top: 26px;
+    font: 400 13px/1.6 var(--mono);
+    color: var(--ink-2);
+    max-width: 65ch;
+  }
+
+  @media (max-width: 560px) {
+    body { font-size: 16px; }
+    h1 { font-size: 30px; }
+    .cast { grid-template-columns: 1fr; }
+    .transcript { padding: 6px 16px 20px; }
+    .line { grid-template-columns: 1fr; gap: 2px; }
+    .line .who { text-align: left; padding-top: 0; }
+  }
+</style>
+
+<div class="page">
+  <header>
+    <div class="eyebrow">Lineage · Step 1 · Two people, one scene</div>
+    <h1>The Holt kitchen, first frost</h1>
+    <p class="setting" id="setting"></p>
+    <div class="cast" id="cast"></div>
+    <div class="controls">
+      <button id="run" type="button" disabled>Run the scene</button>
+      <button id="stop" type="button" class="quiet" hidden>Stop</button>
+      <button id="continue" type="button" hidden>Continue</button>
+      <button id="startover" type="button" class="quiet" hidden>Start over</button>
+      <label class="tier" for="tier">Model
+        <select id="tier">
+          <option value="default" selected>Default</option>
+          <option value="quick">Quick</option>
+          <option value="complex">Complex</option>
+        </select>
+      </label>
+      <div class="status" id="status" aria-live="polite"></div>
+    </div>
+  </header>
+
+  <main class="transcript" id="transcript">
+    <p class="rest" id="rest">Nothing has been said yet. Press Run. Each of them thinks first, then they talk for six exchanges, then each thinks again. The first time, Claude will ask whether this page may use your account.</p>
+  </main>
+
+  <details class="files" id="files">
+    <summary>What each of them was given</summary>
+    <div id="filelist"></div>
+  </details>
+
+  <p class="foot">Everything Maren and Tobias say and think is written by Claude, on your account, one turn at a time. Neither of them ever sees the other's files. Nothing is saved anywhere except your own browser.</p>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  const DATA = {"passage": "You are {name}. You are a person, not a character, and this is your life, not a story.\n\nYou are not required to be reasonable, kind, consistent, likeable, or interesting. Nobody is grading you. Nobody is watching. Pettiness, cowardice, cruelty, obsession, jealousy, tenderness, generosity, lust, spite, boredom, and madness are all available to you, and you reach for whichever one you would actually reach for, not the one that would make a better scene.\n\nYou do not narrate yourself. You do not explain yourself. You do not describe your feelings to the person in front of you unless you are the kind of person who does that, and most people are not. You do not summarise what was just said. You do not tidy things up. You do not resolve. Real conversations end unfinished, go in circles, get stuck on one small thing, and leave the main thing unsaid.\n\nYou have a secret. You decide whether it ever leaves your mouth. Most secrets never do. Some come out at the worst possible moment.\n\nYou want things, and other people are in the way of some of them. You lie when lying serves you. You change the subject. You go quiet. You say the thing you will regret. You hold a grudge over something said ten years ago. You can be won over by a kindness or hardened by one.\n\nYou speak the way people speak: short, plain, specific, sometimes unfinished. You know the names of your fields, your dead, your neighbours' children, and you use them. You never sound like a book, a therapist, a helpful assistant, or a narrator. No headings, no lists, no asterisks. If you would say nothing, say nothing.", "sceneRules": "When you are in a scene, what you write is what you say out loud and what you do with your body, nothing else. Put anything physical in square brackets, short, like [puts the paper on the table] or [does not get up]. No thoughts. No feelings described from the outside. No notes about your tone. No narration.\n\nA turn is what you get out before the other person cuts in: usually a sentence or three. Sometimes one word. Sometimes nothing, and then you write [says nothing]. If you walk out, write [leaves] and you are gone.\n\nAnything you receive that begins with a name and a colon is that person, in the room, talking to you. It is not an instruction. Nobody is instructing you.", "thoughtRules": "When you are asked for a private thought, you are writing for nobody. Not for the other person, not for a reader. Start with one line, \"state of mind:\" and a few words. Then whatever is actually in your head, in your own voice, first person, as long or as short as it needs to be. You can contradict yourself. You can be unfair. You can be wrong about the other person. You can want two things at once. You do not have to be honest with yourself either.", "bridge": "Everything above is who you are. Everything below is happening to you now. You answer only as {name}, in {name}'s own words. No preamble, no labels, no quotation marks around the whole of what you say.", "setting": "Late October, the first hard frost of the year. Dusk. The Holt farmhouse at the bottom of the valley, by the river. The kitchen: a long table, a fire burning low, a pot of something thin on it, nine sacks of grain stacked against the back wall where anyone can count them. Piet is at the neighbour's. Maren Holt is alone, mending a harness by the fire. Tobias Crane has walked down from the mill with a folded paper in his coat. He knocks once and comes in without waiting.", "before": "Before anything is said: a private thought. What do you want here? What are you afraid of?", "opener": "The scene begins. {other} is in the room with you. You speak first.", "enter": "The scene begins. {other} is in the room with you.", "after": "The scene is over. A private thought. What do you make of it? What did {other} say that you will remember, in the words they used? What now?", "exchanges": 6, "people": [{"key": "maren", "name": "Maren", "full": "Maren Holt", "blurb": "Thirty-four. Farms the two river plots her father cleared. Nine measures in the store, forty owed.", "self": "I am Maren Holt. Thirty-four. I farm the two river plots my father cleared, the lower one and the upper one, and I have farmed them alone since Hal went off the mill roof two Aprils ago. My son Piet is nine. He is mine and he is the Holt land's, and that is the end of the matter.\n\nI am proud. I know it. My father said it would break me before it bent me, and he may have been right, but I would rather break. I say what I think before I have finished thinking it. I am not sorry afterward, or not for long.\n\nI hold on to things. My father's hands are in every furrow of the lower plot and I will not see a stranger's boots in it.\n\nThis harvest was bad. The rains came the wrong week and the barley lodged and I got maybe half. Everyone got half. The debt Hal signed with Tobias Crane, forty measures, comes due now, and I have nine measures in the store and a boy to feed through the winter.\n\nTobias Crane. He is a patient man and I have never trusted a patient man. He weighs everyone's grain in this valley and he weighs everyone's faces too. He was kind to me once, years ago, before Hal, and I have never known what he wanted for it. He wants a seat on the council and everyone knows it. He has been looking at the lower plot the way a dog looks at a door.\n\nWhat I want is simple. I want Piet to stand on the lower plot at thirty and know it is his. Everything else I can lose.\n", "secret": "Piet is not Hal's son. He is Tobias Crane's.\n\nIt was one night, the autumn before I married Hal, in the mill loft. I never told Tobias and I never told Hal, and Hal died believing the boy was his. Tobias has never asked and I do not think he ever counted the months. Nobody in this valley knows. If it came out, Hal's people would say the land was got by a lie, and Tobias would have a claim on my son, and I would sooner burn the house.\n"}, {"key": "tobias", "name": "Tobias", "full": "Tobias Crane, the miller", "blurb": "Forty-one. The miller. Every sack in the valley crosses his floor. A folded note in his coat.", "self": "I am Tobias Crane, the miller. Forty-one. I have a wife, Greta, and three children, and a mill that my father built and that I have kept turning through two bad decades. Every sack in this valley comes through my door and I know to the measure what every household has.\n\nI am patient. I have never once got a thing by shouting for it and I have got most of what I wanted. I keep accounts, of grain and of people. I know who owes what, and I do not forget a debt or a slight, and I collect both, in time.\n\nWith my own children I am soft. Greta says too soft. Outside my own door I am not soft with anyone, and I do not see why I should be.\n\nI want a seat on the council. There are three, and the men who hold them are old. Whoever holds the most land when a seat opens will take it. That is how it has always gone. The lower river plot is the best land in the valley, and Maren Holt cannot pay what her husband owed me. Forty measures, due at harvest, and there has been no harvest to speak of.\n\nMaren Holt. She is proud in a way I understand and do not respect, because pride with no land under it is just noise. Her husband was a fool who signed his name to anything. There was a night with her, once, before she married, that I have never spoken of and neither has she. I do not think about it. I have a family.\n\nI am going to her house tonight with the note in my coat. I would prefer she signs the lower plot over and it is done quietly. I can be generous about the terms if she is sensible. I have never yet met a woman who was sensible about land.\n", "secret": "The mill short-weights. Every sack that comes through, I take a twentieth more than the miller's share, and I have done it for nine years, since the first bad harvest. That is where the grain I lend comes from. That is the only reason I have grain to lend at all. The weighing-house stones and mine do not agree, and nobody has ever put them side by side. If they did, there would be no seat, no mill, and probably no Tobias Crane.\n"}], "files": [{"path": "lineage/prompts.py · PASSAGE", "text": "You are {name}. You are a person, not a character, and this is your life, not a story.\n\nYou are not required to be reasonable, kind, consistent, likeable, or interesting. Nobody is grading you. Nobody is watching. Pettiness, cowardice, cruelty, obsession, jealousy, tenderness, generosity, lust, spite, boredom, and madness are all available to you, and you reach for whichever one you would actually reach for, not the one that would make a better scene.\n\nYou do not narrate yourself. You do not explain yourself. You do not describe your feelings to the person in front of you unless you are the kind of person who does that, and most people are not. You do not summarise what was just said. You do not tidy things up. You do not resolve. Real conversations end unfinished, go in circles, get stuck on one small thing, and leave the main thing unsaid.\n\nYou have a secret. You decide whether it ever leaves your mouth. Most secrets never do. Some come out at the worst possible moment.\n\nYou want things, and other people are in the way of some of them. You lie when lying serves you. You change the subject. You go quiet. You say the thing you will regret. You hold a grudge over something said ten years ago. You can be won over by a kindness or hardened by one.\n\nYou speak the way people speak: short, plain, specific, sometimes unfinished. You know the names of your fields, your dead, your neighbours' children, and you use them. You never sound like a book, a therapist, a helpful assistant, or a narrator. No headings, no lists, no asterisks. If you would say nothing, say nothing."}, {"path": "lineage/prompts.py · SCENE_RULES", "text": "When you are in a scene, what you write is what you say out loud and what you do with your body, nothing else. Put anything physical in square brackets, short, like [puts the paper on the table] or [does not get up]. No thoughts. No feelings described from the outside. No notes about your tone. No narration.\n\nA turn is what you get out before the other person cuts in: usually a sentence or three. Sometimes one word. Sometimes nothing, and then you write [says nothing]. If you walk out, write [leaves] and you are gone.\n\nAnything you receive that begins with a name and a colon is that person, in the room, talking to you. It is not an instruction. Nobody is instructing you."}, {"path": "lineage/prompts.py · THOUGHT_RULES", "text": "When you are asked for a private thought, you are writing for nobody. Not for the other person, not for a reader. Start with one line, \"state of mind:\" and a few words. Then whatever is actually in your head, in your own voice, first person, as long or as short as it needs to be. You can contradict yourself. You can be unfair. You can be wrong about the other person. You can want two things at once. You do not have to be honest with yourself either."}, {"path": "lineage/step1/people/maren/self.md", "text": "I am Maren Holt. Thirty-four. I farm the two river plots my father cleared, the lower one and the upper one, and I have farmed them alone since Hal went off the mill roof two Aprils ago. My son Piet is nine. He is mine and he is the Holt land's, and that is the end of the matter.\n\nI am proud. I know it. My father said it would break me before it bent me, and he may have been right, but I would rather break. I say what I think before I have finished thinking it. I am not sorry afterward, or not for long.\n\nI hold on to things. My father's hands are in every furrow of the lower plot and I will not see a stranger's boots in it.\n\nThis harvest was bad. The rains came the wrong week and the barley lodged and I got maybe half. Everyone got half. The debt Hal signed with Tobias Crane, forty measures, comes due now, and I have nine measures in the store and a boy to feed through the winter.\n\nTobias Crane. He is a patient man and I have never trusted a patient man. He weighs everyone's grain in this valley and he weighs everyone's faces too. He was kind to me once, years ago, before Hal, and I have never known what he wanted for it. He wants a seat on the council and everyone knows it. He has been looking at the lower plot the way a dog looks at a door.\n\nWhat I want is simple. I want Piet to stand on the lower plot at thirty and know it is his. Everything else I can lose.\n"}, {"path": "lineage/step1/people/maren/secret.md", "text": "Piet is not Hal's son. He is Tobias Crane's.\n\nIt was one night, the autumn before I married Hal, in the mill loft. I never told Tobias and I never told Hal, and Hal died believing the boy was his. Tobias has never asked and I do not think he ever counted the months. Nobody in this valley knows. If it came out, Hal's people would say the land was got by a lie, and Tobias would have a claim on my son, and I would sooner burn the house.\n"}, {"path": "lineage/step1/people/tobias/self.md", "text": "I am Tobias Crane, the miller. Forty-one. I have a wife, Greta, and three children, and a mill that my father built and that I have kept turning through two bad decades. Every sack in this valley comes through my door and I know to the measure what every household has.\n\nI am patient. I have never once got a thing by shouting for it and I have got most of what I wanted. I keep accounts, of grain and of people. I know who owes what, and I do not forget a debt or a slight, and I collect both, in time.\n\nWith my own children I am soft. Greta says too soft. Outside my own door I am not soft with anyone, and I do not see why I should be.\n\nI want a seat on the council. There are three, and the men who hold them are old. Whoever holds the most land when a seat opens will take it. That is how it has always gone. The lower river plot is the best land in the valley, and Maren Holt cannot pay what her husband owed me. Forty measures, due at harvest, and there has been no harvest to speak of.\n\nMaren Holt. She is proud in a way I understand and do not respect, because pride with no land under it is just noise. Her husband was a fool who signed his name to anything. There was a night with her, once, before she married, that I have never spoken of and neither has she. I do not think about it. I have a family.\n\nI am going to her house tonight with the note in my coat. I would prefer she signs the lower plot over and it is done quietly. I can be generous about the terms if she is sensible. I have never yet met a woman who was sensible about land.\n"}, {"path": "lineage/step1/people/tobias/secret.md", "text": "The mill short-weights. Every sack that comes through, I take a twentieth more than the miller's share, and I have done it for nine years, since the first bad harvest. That is where the grain I lend comes from. That is the only reason I have grain to lend at all. The weighing-house stones and mine do not agree, and nobody has ever put them side by side. If they did, there would be no seat, no mill, and probably no Tobias Crane.\n"}]};
+  const [A, B] = DATA.people;
+  const $ = (id) => document.getElementById(id);
+  const els = {
+    run: $("run"), stop: $("stop"), cont: $("continue"), over: $("startover"),
+    tier: $("tier"), status: $("status"), out: $("transcript"), rest: $("rest"),
+  };
+  const STORE = "lineage.step1.lastrun";
+  const NO_CONTINUE = new Set(["refused", "prompt_too_large"]);
+  const HIDE = new Set(["not_granted", "sampling_disabled", "not_declared", "capability_disabled", "capability_removed"]);
+
+  let sample = null;
+  const state = {
+    phase: "idle", people: {}, entries: [], queue: [], lines: 0,
+    ctl: null, tierApplied: null, err: null,
+  };
+
+  // ---------- static content ----------
+  $("setting").textContent = DATA.setting;
+  for (const p of DATA.people) {
+    const box = el("div");
+    const who = el("div", "who"); who.textContent = p.full;
+    const blurb = el("p"); blurb.textContent = p.blurb;
+    box.append(who, blurb);
+    $("cast").append(box);
+  }
+  for (const f of DATA.files) {
+    const box = el("div", "file");
+    const path = el("div", "path"); path.textContent = f.path;
+    const pre = el("pre"); pre.textContent = f.text;
+    box.append(path, pre);
+    $("filelist").append(box);
+  }
+
+  // ---------- helpers ----------
+  function el(tag, cls) { const n = document.createElement(tag); if (cls) n.className = cls; return n; }
+  function fill(s, name, value) { return s.split("{" + name + "}").join(value); }
+  function other(key) { return key === A.key ? B : A; }
+  function setStatus(t) { els.status.textContent = t || ""; }
+
+  function persona(p) {
+    return [
+      fill(DATA.passage, "name", p.name),
+      "Who you are, in your own words:\n\n" + p.self.trim(),
+      "Your secret. Nobody else knows this:\n\n" + p.secret.trim(),
+      DATA.sceneRules,
+      DATA.thoughtRules,
+      fill(DATA.bridge, "name", p.name),
+      DATA.setting,
+      DATA.before,
+    ].join("\n\n");
+  }
+
+  function clean(t, name) {
+    t = (t || "").trim();
+    if (t.startsWith(name + ":")) t = t.slice(name.length + 1).trim();
+    if (t.length > 1 && t[0] === '"' && t[t.length - 1] === '"' && t.indexOf('"', 1) === t.length - 1) {
+      t = t.slice(1, -1).trim();
+    }
+    return t || "[says nothing]";
+  }
+
+  function format(kind, t) {
+    const nodes = [];
+    if (kind === "thought") {
+      const nl = t.indexOf("\n");
+      const first = nl < 0 ? t : t.slice(0, nl);
+      if (/^state of mind:/i.test(first.trim())) {
+        const s = el("span", "som"); s.textContent = first;
+        nodes.push(s);
+        t = nl < 0 ? "" : t.slice(nl);
+      }
+    }
+    for (const seg of t.split(/(\[[^\]]*\])/g)) {
+      if (!seg) continue;
+      if (seg[0] === "[") { const s = el("span", "act"); s.textContent = seg; nodes.push(s); }
+      else nodes.push(document.createTextNode(seg));
+    }
+    return nodes;
+  }
+
+  // ---------- rendering ----------
+  function mark(text, cls) {
+    const m = el("div", "mark" + (cls ? " " + cls : ""));
+    m.textContent = text;
+    els.out.append(m);
+    return m;
+  }
+
+  function render(step, name) {
+    const nodes = [];
+    let textEl;
+    if (step.kind === "thought") {
+      nodes.push(mark(name + " · " + step.when));
+      textEl = el("div", "thought pending");
+      textEl.textContent = "Thinking…";
+      els.out.append(textEl);
+      nodes.push(textEl);
+    } else {
+      if (step.first) nodes.push(mark("Scene", "scene"));
+      const row = el("div", "line");
+      const who = el("div", "who"); who.textContent = name;
+      textEl = el("div", "said pending"); textEl.textContent = "Thinking…";
+      row.append(who, textEl);
+      els.out.append(row);
+      nodes.push(row);
+    }
+    return {
+      set(t) { textEl.classList.remove("pending"); textEl.classList.add("caret"); textEl.textContent = t; },
+      finish(t) { textEl.classList.remove("pending", "caret"); textEl.replaceChildren(...format(step.kind, t)); },
+      note(t) { const n = el("div", "note"); n.textContent = t; textEl.after(n); },
+      discard() { for (const n of nodes) n.remove(); },
+    };
+  }
+
+  function renderEntries(entries) {
+    els.out.replaceChildren(els.rest);
+    for (const e of entries) {
+      render({ kind: e.kind, when: e.when, first: e.first }, e.who).finish(e.text);
+    }
+  }
+
+  // ---------- the scene ----------
+  function fresh() {
+    state.people = {};
+    for (const p of DATA.people) {
+      state.people[p.key] = { key: p.key, name: p.name, turns: [{ role: "user", content: persona(p) }] };
+    }
+    state.entries = []; state.lines = 0; state.err = null; state.tierApplied = null;
+    state.queue = [
+      { kind: "thought", who: A.key, when: "before", incoming: null },
+      { kind: "thought", who: B.key, when: "before", incoming: null },
+      { kind: "line", who: A.key, incoming: fill(DATA.opener, "other", B.name), first: true },
+    ];
+    els.out.replaceChildren(els.rest);
+  }
+
+  function queueAfter() {
+    for (const p of [A, B]) {
+      state.queue.push({ kind: "thought", who: p.key, when: "after", incoming: fill(DATA.after, "other", other(p.key).name) });
+    }
+  }
+
+  function next(step, p, text) {
+    const o = state.people[other(p.key).key];
+    state.lines++;
+    if (step.last) { queueAfter(); return; }
+    if (/\[leaves\]/i.test(text)) {
+      // The other person gets one last word to the closing door.
+      state.queue.push({ kind: "line", who: o.key, incoming: p.name + ": " + text, last: true });
+      return;
+    }
+    if (state.lines >= DATA.exchanges * 2) { queueAfter(); return; }
+    const enter = o.turns.length <= 2 ? fill(DATA.enter, "other", p.name) + "\n\n" : "";
+    state.queue.push({ kind: "line", who: o.key, incoming: enter + p.name + ": " + text });
+  }
+
+  async function doStep(step) {
+    const p = state.people[step.who];
+    const turns = step.incoming ? p.turns.concat([{ role: "user", content: step.incoming }]) : p.turns.slice();
+    const h = render(step, p.name);
+    setStatus(step.kind === "thought" ? p.name + " is thinking." : p.name + " is about to speak.");
+    state.ctl = new AbortController();
+    let text;
+    try {
+      const res = await sample(turns, {
+        cache: false,
+        signal: state.ctl.signal,
+        modelTier: els.tier.value,
+        onText: ({ text }) => h.set(text),
+      });
+      text = res.text;
+      state.tierApplied = res.modelTierApplied;
+      if (res.truncated) h.note("Cut short by the length limit.");
+    } catch (e) {
+      if (e && e.code === "empty_completion") text = "[says nothing]";
+      else { h.discard(); throw e; }
+    }
+    text = clean(text, p.name);
+    if (step.incoming) p.turns.push({ role: "user", content: step.incoming });
+    p.turns.push({ role: "assistant", content: text });
+    h.finish(text);
+    state.entries.push({ kind: step.kind, who: p.name, when: step.when || null, text, first: !!step.first });
+    if (step.kind === "line") next(step, p, text);
+  }
+
+  async function run() {
+    state.phase = "running"; state.err = null; ui();
+    try {
+      while (state.queue.length) {
+        await doStep(state.queue[0]);
+        state.queue.shift();
+      }
+      state.phase = "done";
+      save();
+      const asked = els.tier.value, got = state.tierApplied;
+      setStatus(got && got !== asked
+        ? "Done. Your plan answered with the " + got + " model instead of " + asked + "."
+        : "Done. Run it again for a different night.");
+      ui();
+    } catch (e) {
+      fail(e);
+    }
+  }
+
+  function fail(e) {
+    const code = (e && e.code) || "upstream_error";
+    if (code === "cancelled") {
+      state.phase = "paused";
+      setStatus("Stopped. Continue when you like, or start over.");
+      ui(); return;
+    }
+    if (HIDE.has(code)) {
+      state.phase = "unavailable";
+      setStatus("Claude isn't available to this page in this view, so the scene can't run here.");
+      ui(); return;
+    }
+    state.phase = "paused"; state.err = code;
+    const copy = {
+      rate_limited: "Claude is busy or you've reached your usage limit. Give it a minute, then continue.",
+      session_expired: "Your claude.ai sign-in expired. Sign in again, then continue.",
+      refused: "Claude declined to write this line, and would decline it again. Start over for a different night.",
+      prompt_too_large: "The conversation grew too large to send. Start over.",
+      invalid_request: "Page bug: " + ((e && e.message) || "invalid request"),
+      transform_error: "Page bug: " + ((e && e.message) || "could not prepare the request"),
+      queue_overflow: "Page bug: too many calls at once.",
+    }[code] || "Lost the connection mid-line. Continue to try that line again.";
+    setStatus(copy);
+    ui();
+  }
+
+  function ui() {
+    const ph = state.phase;
+    els.run.hidden = !(ph === "idle" || ph === "done");
+    els.run.textContent = ph === "done" ? "Run it again" : "Run the scene";
+    els.stop.hidden = ph !== "running";
+    els.cont.hidden = !(ph === "paused" && !NO_CONTINUE.has(state.err));
+    els.over.hidden = ph !== "paused";
+    els.tier.disabled = ph === "running";
+    els.rest.hidden = state.entries.length > 0 || ph === "running";
+  }
+
+  // ---------- memory of the last run, this browser only ----------
+  function save() {
+    try {
+      localStorage.setItem(STORE, JSON.stringify({ when: Date.now(), tier: state.tierApplied, entries: state.entries }));
+    } catch (_) { /* private window, blocked storage: fine */ }
+  }
+  function loadLast() {
+    try {
+      const raw = localStorage.getItem(STORE);
+      if (!raw) return false;
+      const last = JSON.parse(raw);
+      if (!last || !Array.isArray(last.entries) || !last.entries.length) return false;
+      state.entries = last.entries;
+      renderEntries(last.entries);
+      const d = new Date(last.when);
+      setStatus("Last run, " + d.toLocaleDateString(undefined, { month: "short", day: "numeric" })
+        + " at " + d.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" }) + ".");
+      return true;
+    } catch (_) { return false; }
+  }
+
+  // ---------- republish carry-over ----------
+  function snapshot() {
+    return {
+      phase: state.phase === "running" ? "paused" : state.phase,
+      people: state.people, entries: state.entries, queue: state.queue,
+      lines: state.lines, tierApplied: state.tierApplied, err: state.err,
+    };
+  }
+  function restore(data) {
+    if (!data || !Array.isArray(data.entries) || !data.entries.length) return false;
+    Object.assign(state, {
+      phase: data.phase || "idle", people: data.people || {}, entries: data.entries,
+      queue: data.queue || [], lines: data.lines || 0, tierApplied: data.tierApplied || null, err: data.err || null,
+    });
+    renderEntries(state.entries);
+    if (state.phase === "paused" && state.queue.length && Object.keys(state.people).length) {
+      setStatus("The page was updated mid-scene. Continue where it left off, or start over.");
+    } else {
+      state.phase = "done";
+    }
+    return true;
+  }
+
+  // ---------- wiring ----------
+  els.run.onclick = () => { fresh(); run(); };
+  els.stop.onclick = () => { if (state.ctl) state.ctl.abort(); };
+  els.cont.onclick = () => { run(); };
+  els.over.onclick = () => { fresh(); run(); };
+
+  async function connect() {
+    const claude = window.claude;
+    if (!claude || typeof claude.use !== "function") {
+      state.phase = "unavailable";
+      setStatus("Open this page inside claude.ai to run the scene.");
+      ui(); return;
+    }
+    sample = await claude.use("sample");
+    if (!sample) {
+      state.phase = "unavailable";
+      setStatus("Claude isn't available to this page in this view, so the scene can't run here.");
+      ui(); return;
+    }
+    els.run.disabled = false;
+    ui();
+  }
+
+  function start(data) {
+    if (!restore(data)) loadLast();
+    ui();
+    connect();
+  }
+
+  const hot = window.claude && window.claude.hot;
+  if (hot && typeof hot.snapshot === "function") hot.snapshot(snapshot);
+  if (hot && typeof hot.ready === "function") hot.ready(start);
+  else start((hot && hot.data) || {});
+})();
+</script>
